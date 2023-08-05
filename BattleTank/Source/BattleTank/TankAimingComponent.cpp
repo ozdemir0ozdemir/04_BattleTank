@@ -17,8 +17,6 @@ void UTankAimingComponent::BeginPlay()
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 // Sets default values for this component's properties
@@ -27,8 +25,12 @@ UTankAimingComponent::UTankAimingComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+}
 
-	// ...
+void UTankAimingComponent::Initialise(UTankTurret* TurretToSet, UTankBarrel* BarrelToSet)
+{
+	Turret = TurretToSet;
+	Barrel = BarrelToSet;
 }
 
 void UTankAimingComponent::AimAt(FVector WorldSpaceAim, float LaunchSpeed)
@@ -37,17 +39,17 @@ void UTankAimingComponent::AimAt(FVector WorldSpaceAim, float LaunchSpeed)
 	//UE_LOG(LogTemp, Warning, TEXT("Camera Comp : %s"),*GetOwner()->FindComponentByClass<UCameraComponent>()->GetComponentLocation().ToString() );
 	//DrawDebugSphere(GetWorld(), GetOwner()->FindComponentByClass<UCameraComponent>()->GetComponentLocation(), 20, 16, FColor::Magenta);
 	
-	DrawDebugLine(
-		GetWorld(),
-		//GetOwner()->FindComponentByClass<UCameraComponent>()->GetComponentLocation() + GetOwner()->FindComponentByClass<UCameraComponent>()->GetComponentRotation().Vector() * 100,
-		Barrel->GetSocketLocation(FName("Projectile")),
-		WorldSpaceAim,
-		FColor::Red,
-		false,
-		-1.0f,
-		0U,
-		10.0f
-	);
+	//DrawDebugLine(
+	//	GetWorld(),
+	//	//GetOwner()->FindComponentByClass<UCameraComponent>()->GetComponentLocation() + GetOwner()->FindComponentByClass<UCameraComponent>()->GetComponentRotation().Vector() * 100,
+	//	Barrel->GetSocketLocation(FName("Projectile")),
+	//	WorldSpaceAim,
+	//	FColor::Red,
+	//	false,
+	//	-1.0f,
+	//	0U,
+	//	10.0f
+	//);
 
 	
 
@@ -79,6 +81,7 @@ void UTankAimingComponent::AimAt(FVector WorldSpaceAim, float LaunchSpeed)
 
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
+	if (!Barrel) { return; }
 	// Current rotation and aim dir difference
 	FRotator BarrelRotator = Barrel->GetForwardVector().Rotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
@@ -89,6 +92,7 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 
 void UTankAimingComponent::MoveTurretTowards(FVector AimDirection)
 {
+	if (!Turret) { return; }
 	// Current rotation and aim dir difference
 	FRotator TurretRotator = Turret->GetForwardVector().Rotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
@@ -98,17 +102,3 @@ void UTankAimingComponent::MoveTurretTowards(FVector AimDirection)
 
 	Turret->SetRotateDirection(DeltaRotator.Yaw);
 }
-
-
-
-void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
-{
-	Barrel = BarrelToSet;
-}
-
-void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
-{
-	Turret = TurretToSet;
-}
-
-
