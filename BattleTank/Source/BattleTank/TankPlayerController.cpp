@@ -1,6 +1,7 @@
 // Copyright Ozdemir Ozdemir 2023
 
 #include "TankPlayerController.h"
+#include "TankAimingComponent.h"
 #include "Tank.h"
 
 ATank* ATankPlayerController::GetControlledTank() const
@@ -17,11 +18,18 @@ void ATankPlayerController::Tick(float DeltaTime)
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();	
+	UTankAimingComponent* AimingComponent = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
+	if (ensure(AimingComponent)) 
+	{
+		FoundAimingComponent(AimingComponent);
+	}
+	
 }
+
 
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	if (!GetControlledTank()) {return;}
+	if (!ensure(GetControlledTank())) {return;}
 
 	FVector HitLocation;
 	if (GetSightRayHitLocation(HitLocation)) 
@@ -70,8 +78,9 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector& HitLocation, FVect
 		ECollisionChannel::ECC_Visibility
 	);
 
+
 	AActor* HittedActor = HitResult.GetActor();
-	if (HittedActor)
+	if (ensure(HittedActor))
 	{
 		HitLocation = HitResult.Location;
 		return true;
