@@ -1,24 +1,23 @@
 // Copyright Ozdemir Ozdemir 2023
 
 #include "TankAIController.h"
-#include "Tank.h"
+#include "TankAimingComponent.h"
 
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
+	AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 }
 
 void ATankAIController::Tick(float DeltaTime)
 {
-	ATank* PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	ATank* ControlledTank = Cast<ATank>(GetPawn());
-
 	Super::Tick(DeltaTime);
-	if (ensure(PlayerTank)) {
-		MoveToActor(PlayerTank, AcceptanceRadius);
 
-		ControlledTank->AimAt(PlayerTank->GetActorLocation());
-		// Fire if read
-		//ControlledTank->Fire(); // TODO limit firing rate
-	}
+	APawn* PlayerTank =GetWorld()->GetFirstPlayerController()->GetPawn();
+	if (!ensure(PlayerTank)) { return; }
+
+	MoveToActor(PlayerTank, AcceptanceRadius);
+
+	AimingComponent->AimAt(PlayerTank->GetActorLocation());
+	AimingComponent->Fire(); 
 }

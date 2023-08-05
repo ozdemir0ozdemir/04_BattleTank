@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "BattleTank.h"
 #include "Components/StaticMeshComponent.h"
 
 #include "TankTurret.generated.h"

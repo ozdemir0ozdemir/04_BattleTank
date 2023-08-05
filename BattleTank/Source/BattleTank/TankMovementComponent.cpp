@@ -4,38 +4,31 @@
 
 #include "TankTrack.h"
 
-void UTankMovementComponent::IntendMoveForward(float Throw)
-{
-	if (Throw == 0) { return; }
-	//UE_LOG(LogTemp, Warning, TEXT("%s Move Forward : %f"), *GetName(), Throw)
-
-	if (ensure(LeftTrack && RightTrack))
-	{
-		LeftTrack->SetThrottle(Throw);
-		RightTrack->SetThrottle(Throw);
-	}
-	
-}
-
-void UTankMovementComponent::IntendTurnRight(float Throw)
-{
-	if (ensure(LeftTrack && RightTrack))
-	{
-		LeftTrack->SetThrottle(Throw);
-		RightTrack->SetThrottle(-Throw);
-	}
-}
-
 void UTankMovementComponent::Initialise(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet)
 {
-
 	if (!ensure(LeftTrackToSet && RightTrackToSet)) { return; }
 
 	LeftTrack = LeftTrackToSet;
 	RightTrack = RightTrackToSet;
 }
 
-void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
+void UTankMovementComponent::IntendMoveForward(float Throw)
+{
+	if (Throw == 0) { return; }
+
+	if (!ensure(LeftTrack && RightTrack)) { return; }
+	LeftTrack->SetThrottle(Throw);
+	RightTrack->SetThrottle(Throw);
+}
+
+void UTankMovementComponent::IntendTurnRight(float Throw)
+{
+	if (!ensure(LeftTrack && RightTrack)) { return; }
+	LeftTrack->SetThrottle(Throw);
+	RightTrack->SetThrottle(-Throw);
+}
+
+void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) 
 {
 	FVector TankForward = GetOwner()->GetActorForwardVector().GetSafeNormal();
 	FVector TankMoveVelocity = MoveVelocity.GetSafeNormal();
@@ -44,8 +37,5 @@ void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool
 	IntendMoveForward(ForwardThrow );
 
 	float TankRotateVelocity  = FVector::CrossProduct(TankForward, TankMoveVelocity).Z;
-
 	IntendTurnRight(TankRotateVelocity );
-
-	//UE_LOG(LogTemp, Warning, TEXT("Move Velocity : %f"), ForwardThrow);
 }

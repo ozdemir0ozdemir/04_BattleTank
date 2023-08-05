@@ -1,7 +1,7 @@
 // Copyright Ozdemir Ozdemir 2023
 #pragma once
 
-#include "CoreMinimal.h"
+#include "BattleTank.h"
 #include "GameFramework/NavMovementComponent.h"
 #include "TankMovementComponent.generated.h"
 
@@ -27,5 +27,4 @@ public:
 private:
 	UTankTrack* LeftTrack = nullptr;
 	UTankTrack* RightTrack = nullptr;
-	
 };

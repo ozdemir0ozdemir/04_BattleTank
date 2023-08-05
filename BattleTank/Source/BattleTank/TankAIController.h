@@ -1,12 +1,12 @@
 // Copyright Ozdemir Ozdemir 2023
 #pragma once
 
-#include "CoreMinimal.h"
+#include "BattleTank.h"
 #include "AIController.h"
 
 #include "TankAIController.generated.h"
 
-class ATank;
+class UTankAimingComponent;
 
 UCLASS()
 class BATTLETANK_API ATankAIController : public AAIController
@@ -16,12 +16,11 @@ class BATTLETANK_API ATankAIController : public AAIController
 public:
 	virtual void Tick(float DeltaTime) override;
 
-
 protected:
 	virtual void BeginPlay() override;
 
-
 private:
 	float AcceptanceRadius = 3000;
+	UTankAimingComponent* AimingComponent = nullptr;
 	
 };

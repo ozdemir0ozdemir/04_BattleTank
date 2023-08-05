@@ -2,11 +2,14 @@
 
 #include "TankPlayerController.h"
 #include "TankAimingComponent.h"
-#include "Tank.h"
 
-ATank* ATankPlayerController::GetControlledTank() const
+void ATankPlayerController::BeginPlay()
 {
-	return Cast<ATank>(GetPawn());
+	Super::BeginPlay();	
+	AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if (!ensure(AimingComponent)) { return; }
+	FoundAimingComponent(AimingComponent);
+	
 }
 
 void ATankPlayerController::Tick(float DeltaTime)
@@ -15,29 +18,14 @@ void ATankPlayerController::Tick(float DeltaTime)
 	AimTowardsCrosshair();
 }
 
-void ATankPlayerController::BeginPlay()
-{
-	Super::BeginPlay();	
-	UTankAimingComponent* AimingComponent = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
-	if (ensure(AimingComponent)) 
-	{
-		FoundAimingComponent(AimingComponent);
-	}
-	
-}
-
 
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	if (!ensure(GetControlledTank())) {return;}
-
 	FVector HitLocation;
 	if (GetSightRayHitLocation(HitLocation)) 
 	{
-		GetControlledTank()->AimAt(HitLocation);
+		AimingComponent->AimAt(HitLocation);
 	}
-
-
 }
 
 bool ATankPlayerController::GetSightRayHitLocation(FVector& HitLocation) const
@@ -59,12 +47,7 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& HitLocation) const
 bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const
 {
 	FVector CameraWorldLocation; // Discarded
-
-	bool bProjectionResult = DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, CameraWorldLocation, LookDirection);
-
-	//DrawDebugLine(GetWorld(), CameraWorldLocation, CameraWorldLocation + LookDirection * 5000, FColor::Red, false, -1.0f, 0U, 5.0f);
-
-	return bProjectionResult;
+	return DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, CameraWorldLocation, LookDirection);
 }
 
 
@@ -80,7 +63,7 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector& HitLocation, FVect
 
 
 	AActor* HittedActor = HitResult.GetActor();
-	if (ensure(HittedActor))
+	if (HittedActor)
 	{
 		HitLocation = HitResult.Location;
 		return true;

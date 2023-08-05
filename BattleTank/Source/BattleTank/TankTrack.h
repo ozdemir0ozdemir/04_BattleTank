@@ -1,7 +1,7 @@
 // Copyright Ozdemir Ozdemir 2023
 #pragma once
 
-#include "CoreMinimal.h"
+#include "BattleTank.h"
 #include "Components/StaticMeshComponent.h"
 
 #include "TankTrack.generated.h"
